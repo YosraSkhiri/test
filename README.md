@@ -32,3 +32,8 @@ type Post {
   comments(options: PageQueryOptions): CommentsPage
 }
 ```
+
+## how run the project
+1. clone repo
+2. npm i
+3. npm run dev
