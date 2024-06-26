@@ -3,6 +3,7 @@ import SearchForm from './SearchForm'
 import Pagination from './Pagination'
 import Author from './Author'
 import FilterByAuthor from './FilterByAuthor'
+import Favorite from './Favorite'
 
 export {
   FilterByAuthor,
@@ -10,4 +11,5 @@ export {
   PostCard,
   SearchForm,
   Pagination,
+  Favorite,
 }

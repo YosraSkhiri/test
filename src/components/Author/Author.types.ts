@@ -1,4 +1,4 @@
 export default interface AuthorProps {
   image?: string,
-  author: string
+  author?: string
 }

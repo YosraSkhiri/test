@@ -6,8 +6,11 @@ const Author = ({
   author
 }: AuthorProps) => {
   const getInitials = () => {
-    const nameArr = author.split(' ')
-    return `${nameArr[0].charAt(0).toUpperCase()}${nameArr[1].charAt(0).toUpperCase()}`
+    if (author) {
+      const nameArr = author?.split(' ')
+      return `${nameArr[0].charAt(0).toUpperCase()}${nameArr[1].charAt(0).toUpperCase()}`
+    }
+    return ''
   }
 
   return (

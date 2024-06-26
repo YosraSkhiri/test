@@ -1,6 +1,6 @@
 import { posts, authors } from '@/api';
 import { PostCard, SearchForm, FilterByAuthor, Pagination } from '@/components'
-import { postType } from '@/types';
+import { CombinedPostsType, PostType } from '@/types';
 import { nanoid } from 'nanoid'
 import { Metadata, ResolvingMetadata } from 'next';
 
@@ -37,7 +37,7 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
   const q = searchParams?.q
   const author = searchParams?.author
   let page = 1
-  let allPosts
+  let allPosts: CombinedPostsType
 
   const allAuthors = await authors.getAllAuthors()
 
@@ -69,7 +69,7 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
         authors={allAuthors.authors} 
       />
       {
-        !q && (
+        !q && allPosts.totalCount && (
           <Pagination 
             count={Math.ceil(allPosts.totalCount / PAGE_LIMIT)} 
             page={page}
@@ -78,13 +78,13 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
       }
       <div className='flex flex-col gap-8 justify-items-center'>
         {
-          allPosts?.posts.map((post: postType) => (
+          allPosts?.posts.length === 0 ? 'No results found' : allPosts?.posts.map((post: PostType) => (
             <PostCard 
               key={nanoid()}
               id={post.id}
               title={post.title}
-              author={post?.user?.name ? post.user.name : allPosts.user.name}
-              date='Jun 22, 2024'
+              author={author ? allPosts?.user?.name : post.user.name }
+              date='Jun 22, 2024' // the api I'm using doesn't provide dates
               link={`/post/${post.id}`}
               className='self-center'
             />
@@ -92,5 +92,5 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
         }
       </div>
     </div>
-  );
+  )
 }

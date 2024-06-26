@@ -1,5 +1,5 @@
 import createApolloClient from '@/client'
-import { postType } from '@/types'
+import { PostType } from '@/types'
 import { gql } from '@apollo/client'
 
 const client = createApolloClient()
@@ -15,8 +15,6 @@ const getAllPosts = async (page = 1, limit = 8) => {
             user {
               id
               name
-              username
-              email
             }
           }
           meta {
@@ -45,8 +43,6 @@ const getPostById = async (id: string) => {
           user {
             id
             name
-            username
-            email
           }
         }
       }
@@ -76,7 +72,7 @@ const searchPostsByTitle = async (title: string) => {
     `,
   })
 
-  const filteredPosts = data.posts.data.filter((post: postType) =>
+  const filteredPosts = data.posts.data.filter((post: PostType) =>
     post.title.toLowerCase().includes(title.toLowerCase())
   );
 
