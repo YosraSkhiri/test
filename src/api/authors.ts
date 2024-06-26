@@ -10,10 +10,9 @@ const getAllAuthors = async () => {
         users {
           data {
             id
-          username
-          name
+            username
+            name
           }
-          
         }
       }
     `,

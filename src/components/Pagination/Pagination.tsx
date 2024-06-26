@@ -3,71 +3,92 @@
 import {
   Pagination as UIPagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { nanoid } from 'nanoid'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect } from 'react'
+import PaginationProps from './Pagination.types'
+import { useSearchParams } from 'next/navigation'
 
 const Pagination = ({
   page,
   count,
   showPrevious = true,
   showNext = true,
-  onChange
-}) => {
-  const [currentPage, setCurrentPage] = useState<number>(page)
-  
+}: PaginationProps) => {  
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    console.log(searchParams.get('author'))
+    console.log(searchParams.get('q'))
+  }, [])
+
   const range = useCallback(() => {
     return Array.from({ length: count }, (_, index) => `${index + 1}`)
   }, [count])
 
-  const generateItems = useCallback(() => {
+  const generateItems = () => {
     return [
       ...(showPrevious ? ['previous'] : []),
       ...range(),
       ...(showNext ? ['next'] : []),
     ]
-  }, [range, showNext, showPrevious])
+  }
 
-  const itemList = useMemo(() => generateItems(), [generateItems])
+  const itemList = generateItems()
 
-  const handleChange = useCallback((clickedPageNumber: number) => {
-    if (clickedPageNumber > 0 && clickedPageNumber <= count) {
-      setCurrentPage(clickedPageNumber)
-      onChange && onChange(clickedPageNumber)
+  const getSearchQuery = () => {
+    let authorId = '';
+    let str = ''
+    
+    if (searchParams.get('author') && searchParams.get('author') !== null) {
+      authorId = `&author=${searchParams.get('author')}`
+      str += authorId
     }
-  }, [count, onChange])
+
+    return str
+  }
 
   return (
-    <UIPagination>
-      <PaginationContent>
-      {
-        itemList.map(item => {
-          if (item === 'previous') {
-            return (
-              <PaginationItem key={nanoid()}>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-            )
-          } else {
-            if (item === 'next') {
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
+    <div className='py-10'>
+      <UIPagination>
+        <PaginationContent>
+        {
+          itemList.map(item => {
+            if (item === 'previous') {
+              return (
+                <PaginationItem key={nanoid()}>
+                  <PaginationPrevious href={`/?page=${page - 1 >= 1 ? page - 1 : 1}${getSearchQuery()}`} />
+                </PaginationItem>
+              )
             } else {
-              <PaginationItem>
-                <PaginationLink href="#">1</PaginationLink>
-              </PaginationItem>
+              if (item === 'next') {
+                return (
+                  <PaginationItem key={nanoid()}>
+                    <PaginationNext href={`/?page=${page + 1 <= count ? page + 1 : page}${getSearchQuery()}`} />
+                  </PaginationItem>
+                )
+              } else {
+                return (
+                  <PaginationItem key={nanoid()}>
+                    <PaginationLink 
+                      isActive={+item === page} 
+                      href={`/?page=${item}${getSearchQuery()}`}
+                    >
+                      {item}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              }
             }
-          }
-        })
-      }
-      </PaginationContent>
-    </UIPagination>
+          })
+        }
+        </PaginationContent>
+      </UIPagination>
+    </div>
   )
 }
 

@@ -1,5 +1,5 @@
 import { posts, authors } from '@/api';
-import { PostCard, SearchForm, Pagination, FilterByAuthor } from '@/components'
+import { PostCard, SearchForm, FilterByAuthor, Pagination } from '@/components'
 import { postType } from '@/types';
 import { nanoid } from 'nanoid'
 import { Metadata, ResolvingMetadata } from 'next';
@@ -51,16 +51,14 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
   if (q) {
     allPosts = await posts.searchPostsByTitle(q)
   } else {
-    if (author) {
-      allPosts = await posts.getPostsByAuthor(author)
-    } else {
-      if(searchParams?.page && isValidNumber(searchParams?.page)) {
-        page = +searchParams.page
-      }
-      allPosts = await posts.getAllPosts(page, PAGE_LIMIT)
-      console.log(allPosts.totalCount)
+    if(searchParams?.page && isValidNumber(searchParams?.page)) {
+      page = +searchParams.page
     }
-    
+    if (author) {
+      allPosts = await posts.getPostsByAuthor(author, page, PAGE_LIMIT)
+    } else {
+      allPosts = await posts.getAllPosts(page, PAGE_LIMIT)
+    }
   }
 
   return (
@@ -70,13 +68,21 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
         selectedAuthor={author} 
         authors={allAuthors.authors} 
       />
+      {
+        !q && (
+          <Pagination 
+            count={Math.ceil(allPosts.totalCount / PAGE_LIMIT)} 
+            page={page}
+          />
+        )
+      }
       <div className='flex flex-col gap-8 justify-items-center'>
         {
           allPosts?.posts.map((post: postType) => (
             <PostCard 
               key={nanoid()}
               title={post.title}
-              author={post?.user?.name ? post.user.name : allPosts?.user.name}
+              author={post?.user?.name ? post.user.name : allPosts.user.name}
               date='Jun 22, 2024'
               link={`/post/${post.id}`}
               className='self-center'
