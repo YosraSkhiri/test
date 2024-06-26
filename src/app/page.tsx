@@ -81,6 +81,7 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
           allPosts?.posts.map((post: postType) => (
             <PostCard 
               key={nanoid()}
+              id={post.id}
               title={post.title}
               author={post?.user?.name ? post.user.name : allPosts.user.name}
               date='Jun 22, 2024'

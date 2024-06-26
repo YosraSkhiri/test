@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from 'next/navigation'
 
 import PostCardProps from './PostCard.types'
-import { StarIcon } from '@radix-ui/react-icons'
 import Author from '../Author'
+import Favorite from '../Favorite'
 
 const PostCard = ({
+  id,
   title,
   date,
   author,
@@ -36,9 +37,7 @@ const PostCard = ({
         
         <div className='flex gap-2 items-center'>
           <Button onClick={() => router.push(link)}>Read more</Button>
-          <Button variant="outline" size="icon">
-            <StarIcon />
-          </Button>
+          <Favorite postId={id} />
         </div>
       </div>
     </div>

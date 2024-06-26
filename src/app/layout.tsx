@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { FavoriteProvider } from '@/context/FavoriteProvider'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div className='max-w-3xl mx-auto py-10 px-2'>
-          {children}
+          <FavoriteProvider>
+            {children}
+          </FavoriteProvider>
         </div>
       </body>
     </html>
