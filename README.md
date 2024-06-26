@@ -21,3 +21,14 @@
   }
 }
  ```
+
+* Post doesn't have a date field in its scheme 
+```
+type Post {
+  id: ID
+  title: String
+  body: String
+  user: User
+  comments(options: PageQueryOptions): CommentsPage
+}
+```

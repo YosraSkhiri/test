@@ -24,6 +24,24 @@ const getAllAuthors = async () => {
   }
 }
 
+const getAuthorById = async (id: string) => {
+  const { data } = await client.query({
+    query: gql`
+      query {
+        user(id: ${id}) {
+          id
+          name
+        }
+      }
+    `,
+  })
+
+  return {
+    author: data.user,
+  }
+}
+
 export {
   getAllAuthors,
+  getAuthorById,
 }

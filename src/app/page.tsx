@@ -1,7 +1,36 @@
 import { posts, authors } from '@/api';
 import { PostCard, SearchForm, Pagination, FilterByAuthor } from '@/components'
 import { postType } from '@/types';
-import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid'
+import { Metadata, ResolvingMetadata } from 'next';
+
+type Props = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+ 
+export async function generateMetadata(
+  { searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  let title = (await parent).title as unknown as string
+
+  const authorId = searchParams?.author as string
+  const q = searchParams?.q
+
+  if(authorId) {
+    const author = await authors.getAuthorById(authorId)
+    title = `${author.author.name} articles`
+  }
+
+  if(q) {
+    title = `Search results for "${q}"`
+  }
+
+  return {
+    title,
+  }
+}
 
 export default async function Home({searchParams}: {searchParams?: {q?: string, page?: string, author?: string}}) {
   const PAGE_LIMIT = 8
@@ -9,8 +38,6 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
   const author = searchParams?.author
   let page = 1
   let allPosts
-
-  console.log(author)
 
   const allAuthors = await authors.getAllAuthors()
 
@@ -36,7 +63,6 @@ export default async function Home({searchParams}: {searchParams?: {q?: string, 
     
   }
 
-  
   return (
     <div>
       <SearchForm />

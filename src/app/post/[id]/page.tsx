@@ -2,7 +2,26 @@ import { posts } from '@/api';
 import { Author } from '@/components';
 import { Button } from '@/components/ui/button';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { Metadata, ResolvingMetadata } from 'next';
 import Link from 'next/link';
+
+type Props = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const postDetails = await posts.getPostById(params.id)
+  const description = (await parent).description
+
+  return {
+    title: postDetails.post.title,
+    description: description
+  }
+}
 
 export default async function Post({ params }: { params: { id: string } }) {
   const postDetails = await posts.getPostById(params.id)
