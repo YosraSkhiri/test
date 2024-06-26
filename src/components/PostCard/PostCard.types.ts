@@ -4,4 +4,5 @@ export default interface PostCardProps {
   author: string,
   image?: string,
   link: string,
+  className?: string,
 }
